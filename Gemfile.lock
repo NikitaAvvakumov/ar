@@ -1,0 +1,50 @@
+GIT
+  remote: git://github.com/adafruit/io-client-ruby.git
+  revision: 9f2226f8fc0a61904beac6e575364196a416bc2e
+  specs:
+    adafruit-io (1.0.1)
+      activemodel (~> 4.2)
+      addressable (~> 2.3)
+      faraday (~> 0.8)
+      faraday_middleware (~> 0.9)
+      multi_xml (~> 0.5)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    activemodel (4.2.5)
+      activesupport (= 4.2.5)
+      builder (~> 3.1)
+    activesupport (4.2.5)
+      i18n (~> 0.7)
+      json (~> 1.7, >= 1.7.7)
+      minitest (~> 5.1)
+      thread_safe (~> 0.3, >= 0.3.4)
+      tzinfo (~> 1.1)
+    addressable (2.4.0)
+    builder (3.2.2)
+    faraday (0.9.2)
+      multipart-post (>= 1.2, < 3)
+    faraday_middleware (0.10.0)
+      faraday (>= 0.7.4, < 0.10)
+    ffi (1.9.10)
+    i18n (0.7.0)
+    json (1.8.3)
+    minitest (5.8.3)
+    multi_xml (0.5.5)
+    multipart-post (2.0.0)
+    rubyserial (0.2.4)
+      ffi (~> 1.9.3)
+    thread_safe (0.3.5)
+    tzinfo (1.2.2)
+      thread_safe (~> 0.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  adafruit-io!
+  rubyserial
+
+BUNDLED WITH
+   1.11.2
