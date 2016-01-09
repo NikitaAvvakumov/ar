@@ -1,6 +1,6 @@
 /*
- * moisture sensor controls 3 LEDs, according to its readings
- * and write sensor reading to serial port
+ * moisture sensor readout controls 3 LEDs
+ * and gets written to serial port
  */
 
 const int SENSOR = A0;
@@ -19,7 +19,10 @@ void setup() {
 
 void loop() {
   moisture = analogRead(SENSOR);
-  Serial.println(moisture);
+//  Serial.println(moisture);
+  Serial.print("Readout: ");
+  Serial.print(moisture);
+  Serial.println(" units");
   
   if (moisture >= 500) {
     digitalWrite(GREEN, HIGH);
@@ -34,6 +37,6 @@ void loop() {
     digitalWrite(YELLOW, LOW);
     digitalWrite(RED, HIGH);
   }
-  delay(5000);
+  delay(1000);
 //  delay(1800000); // read sensor every 30 min
 }

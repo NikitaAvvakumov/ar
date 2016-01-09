@@ -1,27 +1,39 @@
+require 'yaml'
 require 'adafruit/io'
 require 'rubyserial'
 
+SENSOR_UPPER_LIMIT = 800
+
 def read_and_publish
-  avocado_feed = get_feed
   serial = set_serial
   return unless serial
 
-  negative_readings = 0
   while true do
-    reading = serial.read(20)[/(?<=Readout: )\d*(?= units)/]
-    if reading
-      puts "Sensor read as #{reading} after #{negative_readings} negatives"
-      avocado_feed.data.create({ value: reading })
-      sleep 10
-      negative_readings = 0
+    serial_out = serial.read(70)
+    soil = serial_out[/(?<=moisture )\d{2,3}\.\d{1,2}(?=%,)/]
+    air_temp = serial_out[/(?<=temp )-?\d{1,3}\.\d{1,2}(?=C)/]
+    if soil && air_temp
+      publish_to_aio(soil, feed: "avocado-soil-moisture")
+      publish_to_aio(air_temp, feed: "avocado-air-temp")
+      sleep 30
     end
-    negative_readings += 1
   end
 end
 
-def get_feed
-  aio = Adafruit::IO::Client.new key: "71ff75e6dc663f6f4c7c31b262a6499e773c4a55"
-  aio.feeds("avocado-soil-moisture")
+def publish_to_aio(value, feed:)
+  aio_feed = get_aio_feed(feed)
+  aio_feed.data.create({ value: value })
+  puts "Published #{value} to #{feed}"
+end
+
+def get_aio_feed(feed)
+  set_aio_client
+  @aio_client.feeds(feed)
+end
+
+def set_aio_client
+  @aio_key ||= YAML.load_file("aio_key.yml")["aio_key"]
+  @aio_client ||= Adafruit::IO::Client.new key: @aio_key
 end
 
 def set_serial
