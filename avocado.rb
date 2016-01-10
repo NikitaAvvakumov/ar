@@ -9,10 +9,13 @@ def read_and_publish
   return unless serial
 
   while true do
-    serial_out = serial.read(70)
-    # arduino prints to serial messages in the format
-    # "soil moisture xx.xx%, air temp xx.xxC."
-    soil = serial_out[/(?<=moisture )\d{1,3}\.\d{1,2}(?=%,)/]
+    # Arduino prints to serial port messages in the format
+    # "soil moisture xxx.xx%, air temp xxx.xxC." with \r\n between lines.
+    # To ensure that the regex can always match, need to read 60 characters to
+    # account for the worst-case scenario:
+    # "oisture xxx.xx%, air temp xxx.xxC.\r\nsoil moisture xxx.xx%"
+    serial_out = serial.read(60)
+    soil = serial_out[/(?<=moisture )\d{1,3}\.\d{1,2}(?=%)/]
     air_temp = serial_out[/(?<=temp )-?\d{1,3}\.\d{1,2}(?=C)/]
     if soil && air_temp
       publish_to_aio(soil, feed: "avocado-soil-moisture")
