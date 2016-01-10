@@ -46,7 +46,11 @@ end
 
 def set_serial
   if osx?
-    Serial.new "/dev/cu.usbmodem1411", 9600
+    begin
+      Serial.new "/dev/cu.usbmodem1411", 9600
+    rescue RubySerial::Exception
+      Serial.new "/dev/cu.usbmodem1421", 9600
+    end
   elsif linux?
     Serial.new "/dev/ttyACM0", 9600
   else
