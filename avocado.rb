@@ -10,7 +10,9 @@ def read_and_publish
 
   while true do
     serial_out = serial.read(70)
-    soil = serial_out[/(?<=moisture )\d{2,3}\.\d{1,2}(?=%,)/]
+    # arduino prints to serial messages in the format
+    # "soil moisture xx.xx%, air temp xx.xxC."
+    soil = serial_out[/(?<=moisture )\d{1,3}\.\d{1,2}(?=%,)/]
     air_temp = serial_out[/(?<=temp )-?\d{1,3}\.\d{1,2}(?=C)/]
     if soil && air_temp
       publish_to_aio(soil, feed: "avocado-soil-moisture")
@@ -22,8 +24,14 @@ end
 
 def publish_to_aio(value, feed:)
   aio_feed = get_aio_feed(feed)
-  aio_feed.data.create({ value: value })
-  puts "Published #{value} to #{feed}"
+  begin
+    aio_feed.data.create({ value: value })
+    puts "Published #{value} to #{feed}"
+  rescue => e
+    # adafruit-io's exceptions are undocumented,
+    # therefore rescuing from everything
+    puts "Unable to publish #{value} to #{feed}: #{e.message}"
+  end
 end
 
 def get_aio_feed(feed)
