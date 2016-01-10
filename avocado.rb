@@ -45,32 +45,42 @@ def set_aio_client
 end
 
 def set_serial
-  if osx?
-    begin
-      Serial.new "/dev/cu.usbmodem1411", 9600
-    rescue RubySerial::Exception
-      Serial.new "/dev/cu.usbmodem1421", 9600
-    end
-  elsif linux?
-    Serial.new "/dev/ttyACM0", 9600
+  if host_is_osx?
+    set_osx_serial
+  elsif host_is_linux?
+    set_linux_serial
   else
     puts "Unsupported OS"
     false
   end
 end
 
-def osx?
+def host_is_osx?
   if RUBY_PLATFORM =~ /darwin/
     puts "OS X detected"
     true
   end
 end
 
-def linux?
+def host_is_linux?
   if RUBY_PLATFORM =~ /linux/
     puts "Linux detected"
     true
   end
+end
+
+def set_osx_serial
+  # on OS X, address of serial port seems to alter between these two values
+  # when Arduino is reconnected
+  begin
+    Serial.new "/dev/cu.usbmodem1411", 9600
+  rescue RubySerial::Exception
+    Serial.new "/dev/cu.usbmodem1421", 9600
+  end
+end
+
+def set_linux_serial
+  Serial.new "/dev/ttyACM0", 9600
 end
 
 read_and_publish
