@@ -1,1 +1,1 @@
-# Simple IoT project using Arduino Uno to measure plant soil moisture, with readings published to Adafruit.io
+## Simple IoT project using Arduino Uno to measure soil moisture and air temperature, with readings published to Adafruit.io
